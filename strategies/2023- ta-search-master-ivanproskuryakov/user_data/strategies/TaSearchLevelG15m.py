@@ -11,15 +11,15 @@ from statistics import mean
 from freqtrade.persistence.trade_model import Trade
 from freqtrade.strategy.interface import IStrategy
 
-# "minimal_roi": {
-#     "0": 0.05
-# },
-# "stoploss": -0.05,
-#
-# "trailing_stop": true,
-# "trailing_stop_positive": 0.05,
-# "trailing_stop_positive_offset": 0.2,
-# "trailing_only_offset_is_reached": true,
+ "minimal_roi": {
+     "0": 0.05
+ },
+ "stoploss": -0.05,
+
+ "trailing_stop": false,
+ "trailing_stop_positive": 0.05,
+ "trailing_stop_positive_offset": 0.2,
+ "trailing_only_offset_is_reached": true,
 
 
 class TaSearchLevelG15m(IStrategy):
