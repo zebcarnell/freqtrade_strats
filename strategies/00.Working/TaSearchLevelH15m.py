@@ -11,19 +11,35 @@ from statistics import mean
 from freqtrade.persistence.trade_model import Trade
 from freqtrade.strategy.interface import IStrategy
 
- "minimal_roi": {
-     "0": 0.05
- },
- "stoploss": -0.05,
+# By: ivanproskuryakov
 
- "trailing_stop": false,
- "trailing_stop_positive": 0.05,
- "trailing_stop_positive_offset": 0.2,
- "trailing_only_offset_is_reached": true,
+class TaSearchLevelH15m(IStrategy):
+    INTERFACE_VERSION = 3
 
+    timeframe = "15m"
 
-class TaSearchLevelG15m(IStrategy):
     can_short: bool = True
+
+    minimal_roi = {"0": 100.0}
+
+    stoploss = -0.25
+
+    trailing_stop = False
+
+    process_only_new_candles = True
+
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = False
+
+    startup_candle_count: int = 30
+
+    order_types = {
+        "entry": "limit",
+        "exit": "limit",
+        "stoploss": "market",
+        "stoploss_on_exchange": False,
+    }
 
     def populate_indicators(self, df: pd.DataFrame, metadata: dict) -> pd.DataFrame:
         pd.set_option('display.max_rows', 100000)
@@ -257,34 +273,40 @@ class TaSearchLevelG15m(IStrategy):
 
         print('------------------- confirm_trade_entry -------------', pair, rate)
 
-        mean = (
-            df['i_open'].iat[-1] +
-            df['i_close'].iat[-1]
-        ) / 2
-
-        # # open = df['i_open'].iat[-1]
-        # # close = df['i_close'].iat[-1]
-        # min_ = min(
-        #     # df['i_high'].iat[-1],
-        #     # df['i_low'].iat[-1],
-        #     df['i_open'].iat[-1],
-        #     df['i_close'].iat[-1]
-        # )
-        # max_ = max(
-        #     # df['i_high'].iat[-1],
-        #     # df['i_low'].iat[-1],
-        #     df['i_open'].iat[-1],
-        #     df['i_close'].iat[-1]
-        # )
-
-        if mean == 0:
+        # avg
+        # avg = (
+        #       df['i_open'].iat[-1] +
+        #       df['i_close'].iat[-1]
+        # ) / 2
+        #
+        # if avg == 0:
+        #     return False
+        #
+        # if side == 'long':
+        #     return rate < avg
+        #
+        # if side == 'short':
+        #     return rate > avg
+        #
+        # return False
+        #
+        # min-max
+        min_ = min(
+            df['i_high'].iat[-1],
+            df['i_low'].iat[-1],
+        )
+        max_ = max(
+            df['i_high'].iat[-1],
+            df['i_low'].iat[-1],
+        )
+        if min_ == 0:
             return False
 
         if side == 'long':
-            return rate < mean
+            return rate < min_
 
         if side == 'short':
-            return rate > mean
+            return rate > max_
 
         return False
 
@@ -295,23 +317,17 @@ class TaSearchLevelG15m(IStrategy):
     #
     #     df, last_updated = self.dp.get_analyzed_dataframe(pair=pair, timeframe=self.timeframe)
     #     avg = (
-    #         # df['i_high'].iat[-1] +
-    #         # df['i_low'].iat[-1] +
     #         df['i_open'].iat[-1] +
     #         df['i_close'].iat[-1]
     #     ) / 2
     #
     #     min_ = min(
-    #         df['i_high'].iat[-1],
-    #         df['i_low'].iat[-1],
-    #         df['i_open'].iat[-1],
-    #         df['i_close'].iat[-1]
+    #         avg,
+    #         proposed_rate
     #     )
     #     max_ = max(
-    #         df['i_high'].iat[-1],
-    #         df['i_low'].iat[-1],
-    #         df['i_open'].iat[-1],
-    #         df['i_close'].iat[-1]
+    #         avg,
+    #         proposed_rate
     #     )
     #
     #     print(

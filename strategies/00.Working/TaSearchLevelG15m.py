@@ -11,19 +11,36 @@ from statistics import mean
 from freqtrade.persistence.trade_model import Trade
 from freqtrade.strategy.interface import IStrategy
 
- "minimal_roi": {
-     "0": 0.05
- },
- "stoploss": -0.05,
-
- "trailing_stop": false,
- "trailing_stop_positive": 0.05,
- "trailing_stop_positive_offset": 0.2,
- "trailing_only_offset_is_reached": true,
-
+# By: ivanproskuryakov
 
 class TaSearchLevelG15m(IStrategy):
+    INTERFACE_VERSION = 3
+
+    timeframe = "15m"
+
     can_short: bool = True
+
+    minimal_roi = {"0": 100.0}
+
+    stoploss = -0.25
+
+    trailing_stop = False
+
+    process_only_new_candles = True
+
+    use_exit_signal = True
+    exit_profit_only = False
+    ignore_roi_if_entry_signal = False
+
+    startup_candle_count: int = 30
+
+    order_types = {
+        "entry": "limit",
+        "exit": "limit",
+        "stoploss": "market",
+        "stoploss_on_exchange": False,
+    }
+
 
     def populate_indicators(self, df: pd.DataFrame, metadata: dict) -> pd.DataFrame:
         pd.set_option('display.max_rows', 100000)
