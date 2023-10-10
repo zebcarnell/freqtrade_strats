@@ -1,0 +1,105 @@
+freqtrade list-strategies
+freqtrade backtesting -c user_data/spot_config.json --timerange=20210101-20210530 --timeframe=5m -s KAMACCIRSIexit
+
+AlligatorStrat |                           AlligatorStrat.py		Initieel getest.
+BbandRsiRolling |                          BbandRsiRolling.py		Initieel getest.
+BeastBotXBLR7 |                            BeastBotXBLR7.py		Toch foutief..?
+BuyAllSellAllStrategy |                    BuyAllSellAllStrategy.py	Toch foutief..?
+Cenderawasih_2 |                           Cenderawasih_2.py		Initieel getest.
+Cenderawasih_3 |                           Cenderawasih_3.py		HELEMAAL getest
+Chispei |                                  Chispei.py !!!!!		Initieel getest.
+Cluc7werk |                                Cluc7werk.py			Toch foutief..?
+ClucFiatROI |                              ClucFiatROI.py		Initieel getest.
+ClucFiatSlow |                             ClucFiatSlow.py		Initieel getest.
+ClucHAwerk |                               ClucHAwerk.py		Timeframes aanpassen
+CombinedBinHAndClucV2 |                    CombinedBinHAndClucV2.py	Toch foutief..?
+CombinedBinHAndClucV8 |                    CombinedBinHAndClucV8.py	Toch foutief..?
+CombinedBinHAndClucV8Hyper |               CombinedBinHAndClucV8Hyper.py	Toch foutief..? Timeframe issue
+CombinedBinHAndClucV8XH |                  CombinedBinHAndClucV8XH.py		Timeframe issue
+CombinedBinHClucAndMADV6 |                 CombinedBinHClucAndMADV6.py		Timeframe issue
+Combined_NFIv6_SMA |                       Combined_NFIv6_SMA.py		Timeframe issue
+Combined_NFIv7_SMA |                       Combined_NFIv7_SMA.py |		5643!!	Timeframe issue
+CryptoFrogHO3A1 |                          CryptoFrogHO3A1.py			8837	Timeframe issue
+CryptoFrogHO3A2 |                          CryptoFrogHO3A2.py				Timeframe issue
+CryptoFrogHO3A3 |                          CryptoFrogHO3A3.py			12388	Timeframe issue
+CryptoFrogHO3A4 |                          CryptoFrogHO3A4.py			5120	Timeframe issue
+CryptoFrogNFI |                            CryptoFrogNFI.py  			8912	Timeframe issue
+CryptoFrogNFIHO1A |                        CryptoFrogNFIHO1A.py 		13783	Timeframe issue
+CryptoFrogOffset |                         CryptoFrogOffset.py			1469	Timeframe issue
+CustomStoplossWithPSAR |                custom_stoploss_with_psar.py 		2962	Initieel getest.
+Dyna_opti |                                Dyna_opti.py				5916	Timeframe issue
+ElliotV8_original_ichiv3 |                 ElliotV8_original_ichiv3.py		Initieel getest.
+FRAYSTRAT |                            FRAYSTRAT (1).py				842 	Initieel getest.
+FrayLIVEBTC15m |                           FrayLIVEBTC15m.py 			Initieel getest.
+FrayStratBTC |                     FRAYSTRAT-BTCUSDT-1H.py
+FrostAuraM115mStrategy |                   FrostAuraM115mStrategy.py
+FrostAuraM21hStrategy |                    FrostAuraM21hStrategy.py 
+FrostAuraM31hStrategy |                    FrostAuraM31hStrategy.py
+Ichess |                                   Ichess.py
+Ichi |           Example_Strat_With_FileLogging.py
+Ichimoku |                                 Ichimoku.py 
+JustROCR |                                 JustROCR.py 
+KAMACCIRSI |                               KAMACCIRSI.py
+KC_BB |                                    KC_BB.py
+LuxOSC |                                   LuxOSC.py
+MACD_TRI_EMA |                             MACD_TRI_EMA.py
+MFI |                                      MFI.py 
+Martin |                                   Martin.py
+Matoa |                                    Matoa.py
+MiniLambo |                            MiniLambo (2).py
+MiniLambo_TBS |                            MiniLambo (2).py
+MontrealStrategy |                         MontrealStrategy.py
+MultiMA_TSL3 |                              MultiMA_TSL.py
+NASOSv5HO |                             NASOSv5_mod3.py
+NASOSv5_antipump |                         NASOSv5_antipump.py			2550
+NASOSv5_mod3 |                             NASOSv5_mod3.py			16320
+Nostalgia |                                Nostalgia.py				10005 5m
+MultiMA_TSL4b |                            MultiMA_TSL4b.py			5m
+MultiMA_TSL5 |                             MultiMA_TSL5.py			5m
+NASOSv4 |                                  NASOSv4.py				32644 5m
+NASOSv5 |                         NASOSv5_antipump.py				5m
+NASOSv5HO |                             NASOSv5_mod3.py				9886 5m
+NASOSv5_antipump |                         NASOSv5_antipump.py			5m
+NFI46Frog |                                NFI46Frog.py				5962 5m
+NFI5MOHO_WIP |                             NFI5MOHO_WIP.py			23349 5m
+NFIX_BB_RPB |                              NFIX_BB_RPB.py
+
+5min only tested here:
+NfiNextModded |                            NfiNextModded.py
+NormalizerStrategy |                               normalizer.py
+NormalizerStrategyHO2 |                    NormalizerStrategyHO2.py
+Nostalgia |                                Nostalgia.py				10005
+NostalgiaForInfinityNext |                               NFi-772-KC.py		5617
+NostalgiaForInfinityNextGen |              NostalgiaForInfinityNextGen.py		1823
+NostalgiaForInfinityNextV7155 |                                 nfiv7155.py	4725
+NostalgiaForInfinityV6 |                   NostalgiaForInfinityV6.py		8086
+NostalgiaForInfinityX |                    NostalgiaForInfinityX.py		3502
+NotAnotherSMAOffSetStrategy_V2 |           NotAnotherSMAOffSetStrategy_V2.py
+NotAnotherSMAOffsetStrategyHOv3 |        NotAnotherSMAOffsetStrategyHOv3_b.py		15377
+NotAnotherSMAOffsetStrategyLite |          NotAnotherSMAOffsetStrategyLite.py		7818
+NotAnotherSMAOffsetStrategyX1 |            NotAnotherSMAOffsetStrategyX1.py		5153
+ObeliskIM_v1_1 |                           ObeliskIM_v1_1.py
+ObeliskRSI_v6_1 |                          ObeliskRSI_v6_1.py			6158
+Obelisk_Ichimoku_Slow_v1_3 |               Obelisk_Ichimoku_Slow_v1_3.py	12620
+Obelisk_Ichimoku_ZEMA_v1 |                 Obelisk_Ichimoku_ZEMA_v1.py		23330
+PrawnstarOBV |                             PrawnstarOBV.py			21517
+ RSIDirectionalWithTrend |                  RSIDirectionalWithTrend.py
+RSIDirectionalWithTrendSlow |              RSIDirectionalWithTrendSlow.py
+RalliV1 |                                  RalliV1.py				8252
+RalliV1_disable56 |                        RalliV1_disable56.py
+SAR |                                  SAR (1).py
+SMAIP3v2 |                                 SMAIP3v2.py
+SMAOG |                                    SMAOG.py
+SMAOffset |                                SMAOffset.py
+SMAOffsetProtectOptV1 |                    SMAOffsetProtectOptV1.py
+SMAOffsetV2 |                              SMAOffsetV2.py			10974
+SMAOffset_Hippocritical_dca |              SMAOffset_Hippocritical_dca.py
+ Saturn5 |                                  Saturn5.py
+Schism |                                   Schism.py
+Schism2 |                                Schism-v2.py
+Schism2MM |                                Schism2MM.py
+Schism2_BTC |                                Schism-v2.py
+Schism2_ETH |                                Schism-v2.py
+Seb |                                      Seb.py
+Slowbro |                                  Slowbro.py
+SmoothOperator |                           SmoothOperator.py
