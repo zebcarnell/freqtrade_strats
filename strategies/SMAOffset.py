@@ -1,113 +1,101 @@
 # --- Do not remove these libs ---
-from freqtrade.strategy.interface import IStrategy
-from typing import Dict, List
-from functools import reduce
-from pandas import DataFrame
-# --------------------------------
+from datetime import datetime
+from datetime import timedelta
 
 import talib.abstract as ta
-import numpy as np
+from pandas import DataFrame
+
 import freqtrade.vendor.qtpylib.indicators as qtpylib
-import datetime
-from technical.util import resample_to_interval, resampled_merge
-from datetime import datetime, timedelta
 from freqtrade.persistence import Trade
-from freqtrade.strategy import stoploss_from_open, merge_informative_pair, DecimalParameter, IntParameter, CategoricalParameter
+from freqtrade.strategy import DecimalParameter
+from freqtrade.strategy import IntParameter
+from freqtrade.strategy.interface import IStrategy
 
-# author @tirail
 
-ma_types = {
-	'SMA': ta.SMA,
-	'EMA': ta.EMA,
-}
+# --------------------------------
+
 
 class SMAOffset(IStrategy):
-	INTERFACE_VERSION = 2
+    # ROI table:
+    minimal_roi = {
+        "0": 1
+    }
 
-	# hyperopt and paste results here
-	# Buy hyperspace params:
-	buy_params = {
-		"base_nb_candles_buy": 30,
-		"buy_trigger": 'SMA',
-		"low_offset": 0.958,
-	}
+    # Stoploss:
+    stoploss = -0.25
 
-	# Sell hyperspace params:
-	sell_params = {
-		"base_nb_candles_sell": 30,
-		"high_offset": 1.012,
-		"sell_trigger": 'EMA',
-	}
+    # Trailing stop:
+    trailing_stop = False
+    trailing_stop_positive = 0.01
+    trailing_stop_positive_offset = 0.05
+    trailing_only_offset_is_reached = True
 
-	# Stoploss:
-	stoploss = -0.5
+    # Optimal timeframe for the strategy
+    timeframe = '5m'
 
-	# ROI table:
-	minimal_roi = {
-		"0": 1,
-	}
+    use_sell_signal = True
+    sell_profit_only = False
 
-	base_nb_candles_buy = IntParameter(5, 80, default=buy_params['base_nb_candles_buy'], space='buy')
-	base_nb_candles_sell = IntParameter(5, 80, default=sell_params['base_nb_candles_sell'], space='sell')
-	low_offset = DecimalParameter(0.8, 0.99, default=buy_params['low_offset'], space='buy')
-	high_offset = DecimalParameter(0.8, 1.1, default=sell_params['high_offset'], space='sell')
-	buy_trigger = CategoricalParameter(ma_types.keys(), default=buy_params['buy_trigger'], space='buy')
-	sell_trigger = CategoricalParameter(ma_types.keys(), default=sell_params['sell_trigger'], space='sell')
+    process_only_new_candles = True
 
-	# Trailing stop:
-	trailing_stop = False
-	trailing_stop_positive = 0.0001
-	trailing_stop_positive_offset = 0
-	trailing_only_offset_is_reached = False
+    plot_config = {
+        'main_plot': {
+            'sma_30_offset': {'color': 'orange'},
+            'sma_30_offset_pos': {'color': 'orange'},
+        },
+    }
 
-	# Optimal timeframe for the strategy
-	timeframe = '5m'
+    use_custom_stoploss = False
 
-	use_sell_signal = True
-	sell_profit_only = False
+    low_offset = DecimalParameter(0.80, 1.20, default=0.958, space='buy', optimize=True, load=True)
+    high_offset = DecimalParameter(0.80, 1.20, default=1.012, space='sell', optimize=True, load=True)
+    sma_len_buy = IntParameter(5, 50, default=30, space='buy', optimize=True, load=True)
+    sma_len_sell = IntParameter(5, 50, default=30, space='sell', optimize=True, load=True)
 
-	process_only_new_candles = True
-	startup_candle_count = 30
+    startup_candle_count = max(sma_len_buy.value, sma_len_sell.value)
 
-	plot_config = {
-		'main_plot': {
-			'ma_offset_buy': {'color': 'orange'},
-			'ma_offset_sell': {'color': 'orange'},
-		},
-	}
+    def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
+                        current_rate: float, current_profit: float, **kwargs) -> float:
 
-	use_custom_stoploss = False
+        # Make sure you have the longest interval first - these conditions are evaluated from top to bottom.
+        if current_time - timedelta(minutes=1200) > trade.open_date_utc and current_profit < -0.05:
+            return -0.001
 
-	def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
-						current_rate: float, current_profit: float, **kwargs) -> float:
-		return 1
+        # return maximum stoploss value, keeping current stoploss price unchanged
+        return 1
 
-	def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-		if not self.config['runmode'].value == 'hyperopt':
-			dataframe['ma_offset_buy'] = ma_types[self.buy_trigger.value](dataframe, int(self.base_nb_candles_buy.value)) * self.low_offset.value
-			dataframe['ma_offset_sell'] = ma_types[self.sell_trigger.value](dataframe, int(self.base_nb_candles_sell.value)) * self.high_offset.value
-		return dataframe
+    def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        # required for graphing
+        bollinger = qtpylib.bollinger_bands(dataframe['close'], window=20, stds=2)
+        dataframe['bb_lowerband'] = bollinger['lower']
+        dataframe['bb_middleband'] = bollinger['mid']
+        dataframe['bb_upperband'] = bollinger['upper']
 
-	def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-		if self.config['runmode'].value == 'hyperopt':
-			dataframe['ma_offset_buy'] = ma_types[self.buy_trigger.value](dataframe, int(self.base_nb_candles_buy.value)) * self.low_offset.value
+        if self.config['runmode'].value == 'hyperopt':
+            for len in range(5, 51):
+                dataframe[f'sma_{len}'] = ta.SMA(dataframe, timeperiod=len)
+        else:
+            dataframe[f'sma_{self.sma_len_buy.value}'] = ta.SMA(dataframe, timeperiod=self.sma_len_buy.value)
+            dataframe[f'sma_{self.sma_len_sell.value}'] = ta.SMA(dataframe, timeperiod=self.sma_len_sell.value)
 
-		dataframe.loc[
-			(
-					(dataframe['close'] < dataframe['ma_offset_buy']) &
-					(dataframe['volume'] > 0)
-			),
-			'buy'] = 1
-		return dataframe
+        return dataframe
 
-	def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-		if self.config['runmode'].value == 'hyperopt':
-			dataframe['ma_offset_sell'] = ma_types[self.sell_trigger.value](dataframe, int(self.base_nb_candles_sell.value)) * self.high_offset.value
+    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        sma = f'sma_{self.sma_len_buy.value}'
+        dataframe.loc[
+            (
+                    (dataframe['close'] < (dataframe[sma] * self.low_offset.value)) &
+                    (dataframe['volume'] > 0)
+            ),
+            'buy'] = 1
+        return dataframe
 
-		dataframe.loc[
-			(
-					(dataframe['close'] > dataframe['ma_offset_sell']) &
-					(dataframe['volume'] > 0)
-			),
-			'sell'] = 1
-		return dataframe
+    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        sma = f'sma_{self.sma_len_sell.value}'
+        dataframe.loc[
+            (
+                    (dataframe['close'] > (dataframe[sma] * self.high_offset.value)) &
+                    (dataframe['volume'] > 0)
+            ),
+            'sell'] = 1
+        return dataframe
