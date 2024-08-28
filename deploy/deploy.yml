@@ -1,0 +1,39 @@
+---
+- name: Load variables from the current file
+  ansible.builtin.include_vars: "{{ var_file }}"
+
+- name: Copy file structure to remote server
+  ansible.builtin.copy:
+    src: "./exchanges/{{ exchange }}/user_data/"
+    dest: "/home/{{ user_group }}/testbots/{{ bot_name }}/user_data/"
+    owner: "{{ user_group }}"
+    group: "{{ user_group }}"
+    mode: "0777"
+    force: true
+
+- name: Copy Jinja template config.json to remote server
+  ansible.builtin.template:
+    src: "./exchanges/{{ exchange }}/config.json.j2"
+    dest: "/home/{{ user_group }}/testbots/{{ bot_name }}/user_data/config.json"
+    owner: "{{ user_group }}"
+    group: "{{ user_group }}"
+    mode: "0777"
+    force: true
+
+- name: Copy Jinja template docker-compose.yml to remote server
+  ansible.builtin.template:
+    src: "./docker-compose.yml.j2"
+    dest: "/home/{{ user_group }}/testbots/{{ bot_name }}/docker-compose.yml"
+    owner: "{{ user_group }}"
+    group: "{{ user_group }}"
+    mode: "0777"
+    force: true
+
+- name: Docker Compose
+  ansible.builtin.shell:
+    cmd: docker compose up -d
+    chdir: /home/{{ user_group }}/testbots/{{ bot_name }}/
+  args:
+    executable: /bin/bash
+  register: cleaned
+  changed_when: cleaned.rc != 0

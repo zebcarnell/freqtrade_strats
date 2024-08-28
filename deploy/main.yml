@@ -1,0 +1,15 @@
+- name: Setup Freq Trade bots
+  hosts: servers
+  become: false
+
+  vars:
+    exchange: mexc
+    prefix: 5
+
+  tasks:
+    - name: Deploy based on variables in each file
+      ansible.builtin.include_tasks: deploy.yml
+      vars:
+        var_file: "{{ item }}"
+      with_fileglob:
+        - "deployments/*.yml"
