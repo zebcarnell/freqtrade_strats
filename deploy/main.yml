@@ -13,3 +13,5 @@
         var_file: "{{ item }}"
       with_fileglob:
         - "deployments/*.yml"
+        - "deployments/{{ exchange }}.yml"
+        - "deployments/{{ exchange }}-{{ prefix }}.yml"
