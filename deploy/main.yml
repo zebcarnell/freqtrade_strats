@@ -1,10 +1,11 @@
+---
 - name: Setup Freq Trade bots
   hosts: servers
   become: false
 
   vars:
-    exchange: mexc
-    prefix: 5
+    - prefix: "5"
+    - exchange: binance
 
   tasks:
     - name: Deploy based on variables in each file
@@ -13,5 +14,5 @@
         var_file: "{{ item }}"
       with_fileglob:
         - "deployments/*.yml"
-        - "deployments/{{ exchange }}.yml"
-        - "deployments/{{ exchange }}-{{ prefix }}.yml"
+        # - "deployments/{{ exchange }}.yml"
+        # - "deployments/{{ exchange }}-{{ prefix }}.yml"
