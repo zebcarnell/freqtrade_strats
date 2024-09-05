@@ -1,3 +1,5 @@
-deploy/deployments/*
 data/*
-deploy/exchanges/*
+deploy/testbots/*
+deploy/prod/*
+config_backtest_usdt_spot_new.json
+backtest_results

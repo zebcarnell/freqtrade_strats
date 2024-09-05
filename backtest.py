@@ -68,7 +68,7 @@ def run_backtest(strategy, timeframe, timerange):
         '--strategy', strategy,
         '--timeframe', timeframe,
         '--timerange', timerange,
-        '--config', 'user_data/binance/config_backtest_usdt_spot_new.json'
+        '--config', './config_backtest_usdt_spot_new.json'
     ]
     subprocess.run(command)
 
@@ -77,7 +77,7 @@ def main(stdscr):
     curses.start_color()
     curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
-    strategy_folder = 'user_data/strategies'
+    strategy_folder = 'strategies'
     strategies = list_strategies(strategy_folder)
 
     if not strategies:

@@ -4,8 +4,9 @@
   become: false
 
   vars:
-    - prefix: "5"
-    - exchange: binance
+    - prefix: "8"
+    - exchange: "mexc"
+    - directory: "prod"
 
   tasks:
     - name: Deploy based on variables in each file
@@ -13,6 +14,4 @@
       vars:
         var_file: "{{ item }}"
       with_fileglob:
-        - "deployments/*.yml"
-        # - "deployments/{{ exchange }}.yml"
-        # - "deployments/{{ exchange }}-{{ prefix }}.yml"
+        - "./{{ directory }}/deployments/*.yml"
